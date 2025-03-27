@@ -4,10 +4,340 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lær Binærtall!</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Generelt */
+        :root {
+            --primary-color: #007bff; /* Blå */
+            --secondary-color: #6c757d; /* Grå */
+            --background-color: #f8f9fa; /* Lys grå */
+            --card-background: #ffffff; /* Hvit */
+            --text-color: #333;
+            --input-border-color: #ced4da;
+            --success-color: #28a745; /* Grønn */
+            --error-color: #dc3545; /* Rød */
+            --hover-color: #0056b3; /* Mørkere blå */
+            --font-family: 'Poppins', sans-serif;
+            --large-font-size: 2.5rem; /* Større tall */
+            --medium-font-size: 1.5rem;
+            --base-font-size: 1rem;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: transparent; /* Containeren selv er gjennomsiktig */
+            padding: 0; /* Padding settes på kortene */
+            border-radius: 8px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        section.card {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        section.card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Del 1: Interaktive binærsiffer */
+        .binary-interactive-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap; /* For mindre skjermer */
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .place-values {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Juster gap for å matche input-boksene */
+            width: 100%; /* Tar full bredde for å ligge over input */
+            margin-bottom: 5px;
+            padding: 0 5px; /* Litt padding for å justere */
+            box-sizing: border-box; /* Inkluder padding i bredden */
+        }
+
+        .place-values span {
+            display: inline-block;
+            width: 50px; /* Samme bredde som input */
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+        }
+
+
+        .binary-inputs {
+            display: flex;
+            gap: 10px; /* Mellomrom mellom boksene */
+        }
+
+        .binary-digit {
+            width: 50px;
+            height: 70px;
+            font-size: var(--large-font-size);
+            text-align: center;
+            border: 2px solid var(--input-border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none; /* Hindre tekstmarkering ved klikk */
+        }
+
+        .binary-digit:hover {
+            border-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .binary-digit.active {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .equals {
+            font-size: var(--large-font-size);
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin: 0 15px;
+        }
+
+        .decimal-sum-display {
+           text-align: center;
+        }
+
+        #decimal-sum {
+            font-size: var(--large-font-size);
+            font-weight: 600;
+            color: var(--primary-color);
+            display: block; /* Gjør at label under legger seg pent */
+            min-width: 60px; /* For å unngå hopping */
+            transition: color 0.3s ease;
+        }
+
+        .system-label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        .explanation {
+            font-size: 0.95rem;
+            color: #555;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Del 2 & 3: Konverterere */
+        .converter {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; /* Input | Knapp | Output */
+            align-items: start; /* Juster vertikalt */
+            gap: 20px;
+        }
+
+        .input-group, .output-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: var(--medium-font-size);
+            border: 2px solid var(--input-border-color);
+            border-radius: 8px;
+            box-sizing: border-box; /* Viktig for 100% bredde */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        /* Fjerner piler på nummer-input */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type=number] {
+          -moz-appearance: textfield; /* Firefox */
+        }
+
+        .convert-button {
+            padding: 12px 25px;
+            font-size: var(--base-font-size);
+            font-weight: 600;
+            color: white;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 30px; /* Justerer knappens posisjon ift label */
+            align-self: center; /* Sentrerer knappen i sin grid-celle */
+        }
+
+        .convert-button:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        .output-display {
+            font-size: var(--medium-font-size);
+            font-weight: 600;
+            color: var(--primary-color);
+            padding: 12px 0; /* Litt padding for linjehøyde */
+            min-height: 1.5em; /* Høyde for å unngå hopping */
+            word-break: break-all; /* Bryt lange binærstrenger */
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            min-height: 1.2em; /* Plassholder for feilmelding */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        /* Media Queries for responsivitet (enkelt eksempel) */
+        @media (max-width: 768px) {
+            .converter {
+                grid-template-columns: 1fr; /* Stack elementene på små skjermer */
+                gap: 15px;
+            }
+            .convert-button {
+                margin-top: 10px; /* Mindre margin når stablet */
+                width: 100%;
+            }
+            .binary-interactive-container {
+               gap: 10px;
+            }
+             .binary-digit {
+                width: 40px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            .place-values span {
+                 width: 40px;
+                 font-size: 0.75rem;
+            }
+            .equals {
+                font-size: 2rem;
+            }
+            #decimal-sum {
+                font-size: 2rem;
+            }
+             input[type="text"],
+            input[type="number"] {
+                font-size: 1.2rem;
+            }
+            .output-display {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+             .binary-inputs {
+                gap: 5px;
+             }
+             .binary-digit {
+                width: 32px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+             .place-values {
+                gap: 5px;
+             }
+            .place-values span {
+                 width: 32px;
+                 font-size: 0.6rem;
+            }
+             .equals {
+                font-size: 1.5rem;
+                margin: 0 5px;
+            }
+            #decimal-sum {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+
 </head>
 <body>
     <div class="container">
@@ -79,6 +409,146 @@
             <p>Laget med HTML, CSS & JavaScript</p>
         </footer>
 
-    </div> <script src="script.js"></script>
+    </div> <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Del 1: Interaktive binærsiffer ---
+            const binaryInputsContainer = document.querySelector('.binary-inputs');
+            const decimalSumSpan = document.getElementById('decimal-sum');
+            const numBits = 8; // Antall siffer (bits)
+            let binaryDigits = []; // Array for å holde DOM-elementene for sifrene
+
+            // Opprett de interaktive binærsiffer-boksene
+            function createBinaryInputs() {
+                binaryInputsContainer.innerHTML = ''; // Tøm container først
+                binaryDigits = []; // Tøm arrayet
+                for (let i = 0; i < numBits; i++) {
+                    const digitDiv = document.createElement('div');
+                    digitDiv.classList.add('binary-digit');
+                    digitDiv.dataset.value = '0'; // Startverdi er 0
+                    digitDiv.textContent = '0';
+                    digitDiv.addEventListener('click', () => toggleDigit(digitDiv));
+                    binaryInputsContainer.appendChild(digitDiv);
+                    binaryDigits.push(digitDiv); // Legg til i arrayet
+                }
+                updateDecimalSum(); // Oppdater summen initialt
+            }
+
+            // Funksjon for å bytte verdi (0/1) på en boks
+            function toggleDigit(digitDiv) {
+                const currentValue = digitDiv.dataset.value;
+                const newValue = currentValue === '0' ? '1' : '0';
+                digitDiv.dataset.value = newValue;
+                digitDiv.textContent = newValue;
+                digitDiv.classList.toggle('active', newValue === '1'); // Legg til/fjern 'active' klasse
+                updateDecimalSum(); // Oppdater totalsummen
+            }
+
+            // Funksjon for å beregne og vise desimal sum
+            function updateDecimalSum() {
+                let sum = 0;
+                let binaryString = '';
+                // Gå gjennom sifrene fra venstre til høyre (som de er i DOM)
+                binaryDigits.forEach((digitDiv, index) => {
+                    const value = parseInt(digitDiv.dataset.value);
+                    binaryString += digitDiv.dataset.value; // Bygg binærstrengen samtidig
+                    // Beregn potens fra høyre mot venstre (posisjon numBits-1-index)
+                    const power = numBits - 1 - index;
+                    sum += value * Math.pow(2, power);
+                });
+                decimalSumSpan.textContent = sum;
+                // console.log(`Binary: ${binaryString} -> Decimal: ${sum}`); // For debugging
+            }
+
+            // --- Del 2: Binær til Titall ---
+            const binaryInputLong = document.getElementById('binary-input-long');
+            const decimalOutputLong = document.getElementById('decimal-output-long');
+            const convertToDecimalButton = document.getElementById('convert-to-decimal');
+            const binaryInputError = document.getElementById('binary-input-error');
+
+            function convertBinaryToDecimal() {
+                const binaryValue = binaryInputLong.value.trim();
+                binaryInputError.textContent = ''; // Nullstill feilmelding
+
+                if (binaryValue === '') {
+                    decimalOutputLong.textContent = '0';
+                    return;
+                }
+
+                // Validering: sjekk om input kun inneholder 0 og 1
+                if (!/^[01]+$/.test(binaryValue)) {
+                    binaryInputError.textContent = 'Ugyldig input! Bruk kun 0 og 1.';
+                    decimalOutputLong.textContent = '-';
+                    return;
+                }
+
+                // Konverter (parseInt med base 2)
+                // Bruk BigInt for å håndtere potensielt veldig store tall
+                try {
+                    const decimalValue = BigInt(`0b${binaryValue}`);
+                     // Vis resultatet som streng for å unngå problemer med store tall
+                    decimalOutputLong.textContent = decimalValue.toString();
+                } catch (e) {
+                    // Skulle ikke skje pga regex, men sikkerhetsnett
+                    binaryInputError.textContent = 'Feil under konvertering.';
+                    decimalOutputLong.textContent = '-';
+                }
+            }
+
+            // Legg til event listeners for Del 2
+            convertToDecimalButton.addEventListener('click', convertBinaryToDecimal);
+            // Optional: Konvertering mens man skriver (fjernet for klarhet, kan legges til)
+            // binaryInputLong.addEventListener('input', convertBinaryToDecimal);
+
+
+            // --- Del 3: Titall til Binær ---
+            const decimalInputConvert = document.getElementById('decimal-input-convert');
+            const binaryOutputConvert = document.getElementById('binary-output-convert');
+            const convertToBinaryButton = document.getElementById('convert-to-binary');
+            const decimalInputError = document.getElementById('decimal-input-error');
+
+            function convertDecimalToBinary() {
+                const decimalValueString = decimalInputConvert.value.trim();
+                decimalInputError.textContent = ''; // Nullstill feilmelding
+
+                if (decimalValueString === '') {
+                     binaryOutputConvert.textContent = '0';
+                     return;
+                }
+
+                // Bruk BigInt for å håndtere potensielt veldig store tall
+                try {
+                    const decimalValue = BigInt(decimalValueString);
+
+                    // Validering: sjekk om det er et ikke-negativt tall
+                    if (decimalValue < 0n) { // 'n' indikerer BigInt
+                        decimalInputError.textContent = 'Ugyldig input! Skriv et positivt heltall.';
+                        binaryOutputConvert.textContent = '-';
+                        return;
+                    }
+
+                     // Konverter (toString med base 2)
+                    const binaryValue = decimalValue.toString(2);
+                    binaryOutputConvert.textContent = binaryValue;
+
+                } catch (e) {
+                     decimalInputError.textContent = 'Ugyldig input! Skriv et gyldig heltall.';
+                     binaryOutputConvert.textContent = '-';
+                }
+
+
+            }
+
+            // Legg til event listeners for Del 3
+            convertToBinaryButton.addEventListener('click', convertDecimalToBinary);
+            // Optional: Konvertering mens man skriver
+            // decimalInputConvert.addEventListener('input', convertDecimalToBinary);
+
+            // --- Initialisering ---
+            createBinaryInputs(); // Lag de interaktive boksene når siden lastes
+
+        }); // Slutt på DOMContentLoaded
+    </script>
+
 </body>
 </html>
