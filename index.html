@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lær Binærtall!</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Utforsk Binærtallenes Verden</h1>
+            <p class="subtitle">En interaktiv reise fra 0 og 1 til titallsystemet</p>
+        </header>
+
+        <section id="part1" class="card">
+            <h2>Del 1: Bygg ditt eget binærtall (8-bit)</h2>
+            <p>Klikk på boksene for å bytte mellom 0 og 1. Se hvordan verdien i titallsystemet endres!</p>
+            <div class="binary-interactive-container">
+                <div class="place-values">
+                    <span>128</span>
+                    <span>64</span>
+                    <span>32</span>
+                    <span>16</span>
+                    <span>8</span>
+                    <span>4</span>
+                    <span>2</span>
+                    <span>1</span>
+                </div>
+                <div class="binary-inputs">
+                    </div>
+                <div class="equals">=</div>
+                <div class="decimal-sum-display">
+                    <span id="decimal-sum">0</span>
+                    <span class="system-label">(Base 10)</span>
+                </div>
+            </div>
+             <p class="explanation">Hver posisjon i et binærtall representerer en potens av 2 (2<sup>0</sup>=1, 2<sup>1</sup>=2, 2<sup>2</sup>=4 osv.). Tallet i titallsystemet er summen av potensene der det står '1'.</p>
+        </section>
+
+        <section id="part2" class="card">
+            <h2>Del 2: Binærtall til Titall</h2>
+            <p>Skriv inn et binærtall (kun 0 og 1) og se hva det blir i titallsystemet.</p>
+            <div class="converter">
+                <div class="input-group">
+                    <label for="binary-input-long">Binærtall (Base 2):</label>
+                    <input type="text" id="binary-input-long" pattern="[01]*" placeholder="f.eks. 101101">
+                    <div class="error-message" id="binary-input-error"></div>
+                </div>
+                <button id="convert-to-decimal" class="convert-button">Konverter →</button>
+                <div class="output-group">
+                    <label>Titallsystemet (Base 10):</label>
+                    <span id="decimal-output-long" class="output-display">0</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="part3" class="card">
+            <h2>Del 3: Titall til Binærtall</h2>
+            <p>Skriv inn et tall fra titallsystemet (heltall, ikke negativt) og se hva det blir som binærtall.</p>
+            <div class="converter">
+                <div class="input-group">
+                    <label for="decimal-input-convert">Titallsystemet (Base 10):</label>
+                    <input type="number" id="decimal-input-convert" min="0" placeholder="f.eks. 45">
+                     <div class="error-message" id="decimal-input-error"></div>
+                </div>
+                <button id="convert-to-binary" class="convert-button">Konverter →</button>
+                 <div class="output-group">
+                    <label>Binærtall (Base 2):</label>
+                    <span id="binary-output-convert" class="output-display">0</span>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Laget med HTML, CSS & JavaScript</p>
+        </footer>
+
+    </div> <script src="script.js"></script>
+</body>
+</html>
